@@ -2,6 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export GATEWAY_DIR="${SCRIPT_DIR}"
 
 # Load .env if present
 if [[ -f "${SCRIPT_DIR}/.env" ]]; then

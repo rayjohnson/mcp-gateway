@@ -29,8 +29,8 @@
       "tags": ["knowledge", "notes"]
     },
     "things3": {
-      "command": "npx",
-      "args": ["-y", "things3-mcp@latest"],
+      "command": "node",
+      "args": ["${GATEWAY_DIR}/wrappers/things3-wrapper.mjs"],
       "env": {
         "THINGS3_AUTH_TOKEN": "${THINGS3_AUTH_TOKEN}"
       },
