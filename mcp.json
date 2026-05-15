@@ -38,8 +38,7 @@
     },
     "gmail": {
       "command": "npx",
-      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
-      "env": {},
+      "args": ["-y", "mcp-remote", "https://gmailmcp.googleapis.com/mcp/v1"],
       "tags": ["communication", "email"]
     },
     "google-calendar": {

@@ -30,4 +30,4 @@ fi
 
 cd "${SCRIPT_DIR}"
 echo "Starting 1MCP gateway on http://127.0.0.1:3050 ..."
-exec 1mcp serve
+exec 1mcp serve --config "${SCRIPT_DIR}/mcp.json"
