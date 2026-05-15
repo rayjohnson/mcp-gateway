@@ -28,7 +28,7 @@ A unified, local-first [Model Context Protocol](https://modelcontextprotocol.io)
 - `gh` CLI authenticated (`gh auth login`)
 - Things 3 installed with "Enable Things URLs" on (Settings → General)
 - Obsidian running with the [Local REST API plugin](https://github.com/coddingtonbear/obsidian-local-rest-api) enabled
-- Terminal granted **Full Disk Access** in System Settings → Privacy & Security (for iMessage)
+- **Full Disk Access** granted to `uvx` in System Settings → Privacy & Security → Full Disk Access (for iMessage — see [iMessage Setup](#imessage-setup))
 
 ## Installation
 
@@ -161,6 +161,22 @@ Secrets are stored in a vault named **MCP Gateway**. Run `./1password-export.sh`
 
 GitHub token is pulled automatically from `gh auth token` — no 1Password entry needed.
 Gmail, Google Calendar, Google Drive, Notion, Honeycomb use OAuth on first connect — no token stored.
+
+## iMessage Setup
+
+The iMessage server reads `~/Library/Messages/chat.db` directly. macOS protects this file with Full Disk Access (FDA). When the gateway runs as a launchd daemon, **Terminal's FDA does not carry over** — you must grant FDA to `uvx` explicitly.
+
+1. Open **System Settings → Privacy & Security → Full Disk Access**
+2. Click **+** and add `/opt/homebrew/bin/uvx`
+3. Restart the gateway: `launchctl stop com.rayjohnson.mcp-gateway && launchctl start com.rayjohnson.mcp-gateway`
+
+If iMessage still fails after granting FDA to `uvx`, the underlying Python interpreter may also need access. Find it with:
+
+```bash
+uvx python -c "import sys; print(sys.executable)"
+```
+
+Then add that path to Full Disk Access as well.
 
 ## Architecture
 
