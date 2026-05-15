@@ -14,6 +14,15 @@ else
   echo "         Or run ./1password-export.sh to generate it from 1Password."
 fi
 
+# Pull GitHub token from gh CLI so no PAT needs to be stored in .env
+if command -v gh &>/dev/null && gh auth status &>/dev/null; then
+  GITHUB_PERSONAL_ACCESS_TOKEN="$(gh auth token)"
+  export GITHUB_PERSONAL_ACCESS_TOKEN
+else
+  echo "Warning: gh CLI not authenticated. GitHub MCP server will not work."
+  echo "         Run: gh auth login"
+fi
+
 if ! command -v 1mcp &>/dev/null; then
   echo "Installing @1mcp/agent globally..."
   npm install -g @1mcp/agent
