@@ -75,13 +75,15 @@ All clients connect to the same gateway — just change the `app=` parameter so 
 
 ### Claude Desktop
 
-Replace the `mcpServers` block in `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Replace the `mcpServers` block in `~/Library/Application Support/Claude/claude_desktop_config.json`.
+Claude Desktop requires `mcp-remote` as a bridge for local HTTP servers:
 
 ```json
 {
   "mcpServers": {
     "1mcp": {
-      "url": "http://127.0.0.1:3050/mcp?app=claude-desktop"
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://127.0.0.1:3050/mcp?app=claude-desktop", "--allow-http"]
     }
   }
 }

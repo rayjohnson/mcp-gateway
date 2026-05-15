@@ -3,7 +3,8 @@
   "_requires": "1mcp serve must be running — start it with: cd /path/to/mcp-gateway && ./start.sh",
   "mcpServers": {
     "1mcp": {
-      "url": "http://127.0.0.1:3050/mcp?app=claude-desktop"
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://127.0.0.1:3050/mcp?app=claude-desktop", "--allow-http"]
     }
   }
 }
