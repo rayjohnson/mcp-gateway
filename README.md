@@ -28,7 +28,7 @@ A unified, local-first [Model Context Protocol](https://modelcontextprotocol.io)
 - `gh` CLI authenticated (`gh auth login`)
 - Things 3 installed with "Enable Things URLs" on (Settings → General)
 - Obsidian running with the [Local REST API plugin](https://github.com/coddingtonbear/obsidian-local-rest-api) enabled
-- **Full Disk Access** granted to `uvx` in System Settings → Privacy & Security → Full Disk Access (for iMessage — see [iMessage Setup](#imessage-setup))
+- **Full Disk Access** granted to `node` and the venv Python in System Settings → Privacy & Security → Full Disk Access (for iMessage — see [iMessage Setup](#imessage-setup))
 
 ## Installation
 
@@ -180,11 +180,14 @@ realpath .imessage-venv/bin/python3
 # e.g. /Users/you/.local/share/uv/python/cpython-3.13.9-macos-aarch64-none/bin/python3.13
 ```
 
-### 3. Grant Full Disk Access to that path
+### 3. Grant Full Disk Access to both node and the venv Python
+
+The gateway runs under `node` (1mcp's runtime). macOS TCC grants FDA based on the **responsible process** — when node spawns the iMessage Python subprocess, node's FDA status determines whether the child can access protected files. Both binaries need FDA.
 
 1. Open **System Settings → Privacy & Security → Full Disk Access**
-2. Click **+**, press **Cmd+Shift+G**, paste the path from step 2, and add it
-3. Restart the gateway: `launchctl stop com.rayjohnson.mcp-gateway && launchctl start com.rayjohnson.mcp-gateway`
+2. Click **+**, press **Cmd+Shift+G**, paste `/opt/homebrew/bin/node` and add it
+3. Repeat for the Python path from step 2
+4. Restart the gateway: `launchctl stop com.rayjohnson.mcp-gateway && launchctl start com.rayjohnson.mcp-gateway`
 
 > **Why not grant FDA to `uvx`?** macOS resolves symlinks and stores the Homebrew Cellar path (e.g. `.../Cellar/uv/0.11.13/bin/uvx`). After `brew upgrade uv` the Cellar path changes and the grant silently breaks. The uv-managed Python in `~/.local/share/uv/python/` is versioned separately and is not affected by Homebrew upgrades.
 
