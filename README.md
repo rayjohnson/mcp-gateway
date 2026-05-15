@@ -164,19 +164,29 @@ Gmail, Google Calendar, Google Drive, Notion, Honeycomb use OAuth on first conne
 
 ## iMessage Setup
 
-The iMessage server reads `~/Library/Messages/chat.db` directly. macOS protects this file with Full Disk Access (FDA). When the gateway runs as a launchd daemon, **Terminal's FDA does not carry over** — you must grant FDA to `uvx` explicitly.
+The iMessage server reads `~/Library/Messages/chat.db` directly. macOS protects this file with Full Disk Access (FDA). The gateway uses a project-local Python virtualenv (`.imessage-venv/`) to run the iMessage script — granting FDA to **that venv's Python** gives a stable path that survives `brew upgrade uv`.
 
-1. Open **System Settings → Privacy & Security → Full Disk Access**
-2. Click **+** and add `/opt/homebrew/bin/uvx`
-3. Restart the gateway: `launchctl stop com.rayjohnson.mcp-gateway && launchctl start com.rayjohnson.mcp-gateway`
-
-If iMessage still fails after granting FDA to `uvx`, the underlying Python interpreter may also need access. Find it with:
+### 1. Create the virtualenv (once, after cloning)
 
 ```bash
-uvx python -c "import sys; print(sys.executable)"
+uv venv .imessage-venv
+uv pip install --python .imessage-venv/bin/python3 "fastmcp==0.4.1" imessagedb phonenumbers
 ```
 
-Then add that path to Full Disk Access as well.
+### 2. Find the real Python path
+
+```bash
+realpath .imessage-venv/bin/python3
+# e.g. /Users/you/.local/share/uv/python/cpython-3.13.9-macos-aarch64-none/bin/python3.13
+```
+
+### 3. Grant Full Disk Access to that path
+
+1. Open **System Settings → Privacy & Security → Full Disk Access**
+2. Click **+**, press **Cmd+Shift+G**, paste the path from step 2, and add it
+3. Restart the gateway: `launchctl stop com.rayjohnson.mcp-gateway && launchctl start com.rayjohnson.mcp-gateway`
+
+> **Why not grant FDA to `uvx`?** macOS resolves symlinks and stores the Homebrew Cellar path (e.g. `.../Cellar/uv/0.11.13/bin/uvx`). After `brew upgrade uv` the Cellar path changes and the grant silently breaks. The uv-managed Python in `~/.local/share/uv/python/` is versioned separately and is not affected by Homebrew upgrades.
 
 ## Architecture
 

@@ -8,14 +8,8 @@
   },
   "mcpServers": {
     "imessage": {
-      "command": "uvx",
-      "args": [
-        "--from", "fastmcp==0.4.1",
-        "--with", "imessagedb",
-        "--with", "phonenumbers",
-        "fastmcp", "run",
-        "${IMESSAGE_SCRIPT_PATH}"
-      ],
+      "command": "${GATEWAY_DIR}/.imessage-venv/bin/python3",
+      "args": ["-m", "fastmcp", "run", "${IMESSAGE_SCRIPT_PATH}"],
       "tags": ["communication", "macos"]
     },
     "obsidian": {
