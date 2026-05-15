@@ -87,10 +87,7 @@
     },
     "honeycomb": {
       "command": "npx",
-      "args": ["-y", "honeycomb-mcp"],
-      "env": {
-        "HONEYCOMB_API_KEY": "${HONEYCOMB_API_KEY}"
-      },
+      "args": ["-y", "mcp-remote", "https://mcp.honeycomb.io/mcp"],
       "tags": ["observability", "development"]
     },
     "home-assistant": {

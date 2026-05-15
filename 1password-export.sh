@@ -10,7 +10,6 @@
 #   Item "GitHub MCP"        → field: personal_access_token
 #   Item "Linear MCP"        → field: api_key
 #   Item "Notion MCP"        → field: token
-#   Item "Honeycomb MCP"     → field: api_key
 #   Item "Home Assistant MCP"→ field: url, token
 set -euo pipefail
 
@@ -55,8 +54,6 @@ GITHUB_PERSONAL_ACCESS_TOKEN=$(fetch "GitHub MCP" "personal_access_token" "ghp_"
 LINEAR_API_KEY=$(fetch "Linear MCP" "api_key")
 
 NOTION_TOKEN=$(fetch "Notion MCP" "token" "ntn_")
-
-HONEYCOMB_API_KEY=$(fetch "Honeycomb MCP" "api_key")
 
 HOMEASSISTANT_URL=$(fetch "Home Assistant MCP" "url" "http://homeassistant.local:8123")
 HOMEASSISTANT_TOKEN=$(fetch "Home Assistant MCP" "token")
