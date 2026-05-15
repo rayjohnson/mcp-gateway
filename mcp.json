@@ -8,8 +8,8 @@
   },
   "mcpServers": {
     "imessage": {
-      "command": "${GATEWAY_DIR}/.imessage-venv/bin/python3",
-      "args": ["-m", "fastmcp", "run", "${IMESSAGE_SCRIPT_PATH}"],
+      "command": "${GATEWAY_DIR}/.imessage-venv/bin/fastmcp",
+      "args": ["run", "${IMESSAGE_SCRIPT_PATH}"],
       "tags": ["communication", "macos"]
     },
     "obsidian": {
