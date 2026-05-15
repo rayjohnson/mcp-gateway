@@ -7,10 +7,11 @@
 #   Item "Obsidian MCP"      → field: api_key, host, port
 #   Item "Things 3 MCP"      → field: auth_token
 #   Item "Slack MCP"         → field: bot_token, team_id
-#   Item "GitHub MCP"        → field: personal_access_token
 #   Item "Linear MCP"        → field: api_key
-#   Item "Notion MCP"        → field: token
 #   Item "Home Assistant MCP"→ field: url, token
+#
+# GitHub — pulled from `gh auth token` at runtime, not stored here
+# Notion, Honeycomb, Google Calendar/Drive — OAuth on first connect, not stored here
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -49,11 +50,7 @@ THINGS3_AUTH_TOKEN=$(fetch "Things 3 MCP" "auth_token")
 SLACK_BOT_TOKEN=$(fetch "Slack MCP" "bot_token" "xoxb-")
 SLACK_TEAM_ID=$(fetch "Slack MCP" "team_id" "T")
 
-GITHUB_PERSONAL_ACCESS_TOKEN=$(fetch "GitHub MCP" "personal_access_token" "ghp_")
-
 LINEAR_API_KEY=$(fetch "Linear MCP" "api_key")
-
-NOTION_TOKEN=$(fetch "Notion MCP" "token" "ntn_")
 
 HOMEASSISTANT_URL=$(fetch "Home Assistant MCP" "url" "http://homeassistant.local:8123")
 HOMEASSISTANT_TOKEN=$(fetch "Home Assistant MCP" "token")
