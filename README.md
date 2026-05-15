@@ -13,7 +13,7 @@ A unified, local-first [Model Context Protocol](https://modelcontextprotocol.io)
 | Google Calendar | Remote OAuth (`calendarmcp.googleapis.com`) | communication, calendar, google |
 | Google Drive | Remote OAuth (`drivemcp.googleapis.com`) | storage, files, google |
 | GitHub | Local (`server-github` + `gh` CLI token) | development, git |
-| Linear | Local (`linear-mcp-server`) | development, project-management |
+| Linear | Remote OAuth (`mcp.linear.app`) | development, project-management |
 | Notion | Remote OAuth (`mcp.notion.com`) | knowledge, project-management |
 | Honeycomb | Remote OAuth (`mcp.honeycomb.io`) | observability, development |
 | Home Assistant | Local (`ha-mcp` via uvx) | home, automation |
