@@ -1,0 +1,74 @@
+{
+  "$schema": "https://docs.1mcp.app/schemas/v1.0.0/mcp-config.json",
+  "version": "1.0.0",
+  "serverDefaults": {
+    "connectionTimeout": 10000,
+    "requestTimeout": 30000,
+    "inheritParentEnv": true
+  },
+  "mcpServers": {
+    "imessage": {
+      "command": "npx",
+      "args": ["-y", "imessage-mcp"],
+      "env": {
+        "IMESSAGE_DB": "${IMESSAGE_DB}"
+      },
+      "tags": ["communication", "macos"]
+    },
+    "obsidian": {
+      "command": "sh",
+      "args": ["-c", "npx -y @bitbonsai/mcpvault@latest \"$OBSIDIAN_VAULT_PATH\""],
+      "env": {
+        "OBSIDIAN_VAULT_PATH": "${OBSIDIAN_VAULT_PATH}"
+      },
+      "tags": ["knowledge", "notes"]
+    },
+    "things3": {
+      "command": "npx",
+      "args": ["-y", "things3-mcp@latest"],
+      "env": {
+        "THINGS3_AUTH_TOKEN": "${THINGS3_AUTH_TOKEN}"
+      },
+      "tags": ["productivity", "tasks", "macos"]
+    },
+    "gmail": {
+      "command": "npx",
+      "args": ["-y", "@gongrzhe/server-gmail-autoauth-mcp"],
+      "env": {},
+      "tags": ["communication", "email"]
+    },
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
+      },
+      "tags": ["communication", "work"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      },
+      "tags": ["development", "git"]
+    },
+    "linear": {
+      "command": "npx",
+      "args": ["-y", "linear-mcp-server"],
+      "env": {
+        "LINEAR_API_KEY": "${LINEAR_API_KEY}"
+      },
+      "tags": ["development", "project-management"]
+    },
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_TOKEN": "${NOTION_TOKEN}"
+      },
+      "tags": ["knowledge", "project-management"]
+    }
+  }
+}

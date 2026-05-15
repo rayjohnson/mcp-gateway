@@ -1,0 +1,9 @@
+{
+  "_comment": "Paste the mcpServers block into your existing ~/Library/Application Support/Claude/claude_desktop_config.json",
+  "_requires": "1mcp serve must be running — start it with: cd /path/to/mcp-gateway && ./start.sh",
+  "mcpServers": {
+    "1mcp": {
+      "url": "http://127.0.0.1:3050/mcp?app=claude-desktop"
+    }
+  }
+}
