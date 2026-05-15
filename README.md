@@ -9,9 +9,9 @@ A unified, local-first [Model Context Protocol](https://modelcontextprotocol.io)
 | iMessage | Local (fastmcp Python script) | communication, macos |
 | Obsidian | Local (`mcp-obsidian` via uvx) | knowledge, notes |
 | Things 3 | Local (`things3-mcp`) | productivity, tasks, macos |
-| Gmail | Remote OAuth (`gmailmcp.googleapis.com`) | communication, email |
-| Google Calendar | Remote OAuth (`calendarmcp.googleapis.com`) | communication, calendar, google |
-| Google Drive | Remote OAuth (`drivemcp.googleapis.com`) | storage, files, google |
+| Gmail | ⚠️ Remote OAuth (`gmailmcp.googleapis.com`) — see `plans/todo.md` | communication, email |
+| Google Calendar | ⚠️ Remote OAuth (`calendarmcp.googleapis.com`) — see `plans/todo.md` | communication, calendar, google |
+| Google Drive | ⚠️ Remote OAuth (`drivemcp.googleapis.com`) — see `plans/todo.md` | storage, files, google |
 | GitHub | Local (`server-github` + `gh` CLI token) | development, git |
 | Linear | Remote OAuth (`mcp.linear.app`) | development, project-management |
 | Notion | Remote OAuth (`mcp.notion.com`) | knowledge, project-management |
