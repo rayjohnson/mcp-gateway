@@ -6,7 +6,6 @@
 # Expected 1Password vault structure (vault name defaults to "MCP Gateway"):
 #   Item "Obsidian MCP"      → field: api_key, host, port
 #   Item "Things 3 MCP"      → field: auth_token
-#   Item "Slack MCP"         → field: bot_token, team_id
 #   Item "Linear MCP"        → field: api_key
 #   Item "Home Assistant MCP"→ field: url, token
 #
@@ -46,9 +45,6 @@ OBSIDIAN_HOST=$(fetch "Obsidian MCP" "host" "localhost")
 OBSIDIAN_PORT=$(fetch "Obsidian MCP" "port" "27123")
 
 THINGS3_AUTH_TOKEN=$(fetch "Things 3 MCP" "auth_token")
-
-SLACK_BOT_TOKEN=$(fetch "Slack MCP" "bot_token" "xoxb-")
-SLACK_TEAM_ID=$(fetch "Slack MCP" "team_id" "T")
 
 LINEAR_API_KEY=$(fetch "Linear MCP" "api_key")
 

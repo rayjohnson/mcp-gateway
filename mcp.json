@@ -54,11 +54,7 @@
     },
     "slack": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-slack"],
-      "env": {
-        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
-        "SLACK_TEAM_ID": "${SLACK_TEAM_ID}"
-      },
+      "args": ["-y", "mcp-remote", "https://mcp.slack.com/mcp"],
       "tags": ["communication", "work"]
     },
     "github": {
