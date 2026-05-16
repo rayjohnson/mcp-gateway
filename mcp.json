@@ -31,18 +31,18 @@
       "tags": ["productivity", "tasks", "macos"]
     },
     "gmail": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://gmailmcp.googleapis.com/mcp/v1"],
+      "command": "node",
+      "args": ["${GATEWAY_DIR}/wrappers/google-mcp-wrapper.mjs", "https://gmailmcp.googleapis.com/mcp/v1"],
       "tags": ["communication", "email"]
     },
     "google-calendar": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://calendarmcp.googleapis.com/mcp/v1"],
+      "command": "node",
+      "args": ["${GATEWAY_DIR}/wrappers/google-mcp-wrapper.mjs", "https://calendarmcp.googleapis.com/mcp/v1"],
       "tags": ["communication", "calendar", "google"]
     },
     "google-drive": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://drivemcp.googleapis.com/mcp/v1"],
+      "command": "node",
+      "args": ["${GATEWAY_DIR}/wrappers/google-mcp-wrapper.mjs", "https://drivemcp.googleapis.com/mcp/v1"],
       "tags": ["storage", "files", "google"]
     },
     "slack": {

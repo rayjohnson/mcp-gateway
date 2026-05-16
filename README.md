@@ -1,6 +1,6 @@
 # MCP Gateway
 
-A unified, local-first [Model Context Protocol](https://modelcontextprotocol.io) hub for macOS. Powered by [1MCP](https://github.com/1mcp-app/agent), it aggregates 13 MCP servers behind a single runtime endpoint so Claude Desktop, Cursor, Gemini, and other AI clients can share one configuration.
+A unified, local-first [Model Context Protocol](https://modelcontextprotocol.io) hub for macOS. Powered by [1MCP](https://github.com/1mcp-app/agent), it aggregates 12 MCP servers behind a single runtime endpoint so Claude Desktop, Cursor, Gemini, and other AI clients can share one configuration.
 
 ## Services
 
@@ -9,9 +9,9 @@ A unified, local-first [Model Context Protocol](https://modelcontextprotocol.io)
 | iMessage | Local (fastmcp Python script) | communication, macos |
 | Obsidian | Local (`mcp-obsidian` via uvx) | knowledge, notes |
 | Things 3 | Local (`things3-mcp`) | productivity, tasks, macos |
-| Gmail | ⚠️ Remote OAuth (`gmailmcp.googleapis.com`) — see `plans/todo.md` | communication, email |
-| Google Calendar | ⚠️ Remote OAuth (`calendarmcp.googleapis.com`) — see `plans/todo.md` | communication, calendar, google |
-| Google Drive | ⚠️ Remote OAuth (`drivemcp.googleapis.com`) — see `plans/todo.md` | storage, files, google |
+| Gmail | Local wrapper → `gmailmcp.googleapis.com` (Google OAuth) | communication, email |
+| Google Calendar | Local wrapper → `calendarmcp.googleapis.com` (Google OAuth) | communication, calendar, google |
+| Google Drive | Local wrapper → `drivemcp.googleapis.com` (Google OAuth) | storage, files, google |
 | GitHub | Local (`server-github` + `gh` CLI token) | development, git |
 | Linear | Remote OAuth (`mcp.linear.app`) | development, project-management |
 | Notion | Remote OAuth (`mcp.notion.com`) | knowledge, project-management |
@@ -26,6 +26,7 @@ A unified, local-first [Model Context Protocol](https://modelcontextprotocol.io)
 - Node.js 18+ and npm (via Homebrew)
 - `uv` / `uvx` (for Python-based servers: `brew install uv`)
 - `gh` CLI authenticated (`gh auth login`)
+- `gcloud` CLI installed (`brew install google-cloud-sdk`)
 - Things 3 installed with "Enable Things URLs" on (Settings → General)
 - Obsidian running with the [Local REST API plugin](https://github.com/coddingtonbear/obsidian-local-rest-api) enabled
 - **Full Disk Access** granted to `node` and the venv Python in System Settings → Privacy & Security → Full Disk Access (for iMessage — see [iMessage Setup](#imessage-setup))
@@ -48,7 +49,17 @@ cp .env.example .env
 # Edit .env and fill in each token/key
 ```
 
-### 2. Install as a background daemon (recommended)
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Set up Google Services (Gmail, Calendar, Drive)
+
+See [Google Services Setup](#google-services-setup) for the one-time OAuth configuration.
+
+### 4. Install as a background daemon (recommended)
 
 Installs the gateway as a launchd user agent — starts at login, restarts automatically on failure:
 
@@ -61,7 +72,7 @@ Logs are written to `~/Library/Logs/mcp-gateway/`.
 
 See [Daemon Management](#daemon-management) for start/stop/status commands.
 
-### 3. Or run manually
+### 5. Or run manually
 
 ```bash
 ./start.sh
@@ -156,11 +167,45 @@ Secrets are stored in a vault named **MCP Gateway**. Run `./1password-export.sh`
 |----------------|-------|---------|
 | Obsidian MCP | `api_key`, `host`, `port` | `OBSIDIAN_API_KEY`, `OBSIDIAN_HOST`, `OBSIDIAN_PORT` |
 | Things 3 MCP | `auth_token` | `THINGS3_AUTH_TOKEN` |
-| Linear MCP | `api_key` | `LINEAR_API_KEY` |
 | Home Assistant MCP | `url`, `token` | `HOMEASSISTANT_URL`, `HOMEASSISTANT_TOKEN` |
 
 GitHub token is pulled automatically from `gh auth token` — no 1Password entry needed.
-Gmail, Google Calendar, Google Drive, Notion, Honeycomb use OAuth on first connect — no token stored.
+Linear, Notion, Honeycomb use OAuth on first connect — no token stored.
+Google credentials are stored separately — see [Google Services Setup](#google-services-setup).
+
+## Google Services Setup
+
+Gmail, Google Calendar, and Google Drive use a custom OAuth client because Google's auth server does not support Dynamic Client Registration (required by `mcp-remote`). The setup is a one-time process.
+
+### Prerequisites
+
+- A Google Cloud project with the Gmail, Calendar, and Drive APIs enabled
+- An OAuth 2.0 Desktop app client credential downloaded as `~/.config/mcp-gateway/google-credentials.json`
+  (stored in 1Password as "Google OAuth Client - MCP Gateway" in the Ray vault)
+
+To restore credentials from 1Password:
+
+```bash
+mkdir -p ~/.config/mcp-gateway
+op document get "Google OAuth Client - MCP Gateway" --vault Ray \
+  --output ~/.config/mcp-gateway/google-credentials.json
+```
+
+### Authorize (one-time, and every 7 days)
+
+The Google Cloud app is in "Testing" mode, which means OAuth refresh tokens expire after 7 days. Re-run this whenever tools start failing:
+
+```bash
+node scripts/google-auth-setup.mjs
+```
+
+This opens a browser, prompts you to sign in with your Google account, and saves tokens to `~/.config/mcp-gateway/google-tokens.json`. Then restart the gateway:
+
+```bash
+launchctl stop com.rayjohnson.mcp-gateway && launchctl start com.rayjohnson.mcp-gateway
+```
+
+> **Why every 7 days?** Google restricts refresh token lifetime for OAuth apps in "Testing" publishing status. Publishing the app for verification would remove this limit but requires a Google review process.
 
 ## iMessage Setup
 
