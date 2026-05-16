@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 /**
- * One-time setup: authorizes Google access and saves refresh tokens to
- * ~/.config/mcp-gateway/google-tokens.json
+ * Authorizes Google access and saves tokens to ~/.config/mcp-gateway/google-tokens.json
  *
- * Run this whenever tokens expire (testing-mode OAuth apps expire every 7 days).
- * Usage: node scripts/google-auth-setup.mjs
+ * Called automatically by google-mcp-wrapper.mjs when tokens expire.
+ * Can also be run manually: node scripts/google-auth-setup.mjs
  */
 
 import { OAuth2Client } from 'google-auth-library';
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'fs';
 import { createServer } from 'http';
 import { homedir } from 'os';
 import { join } from 'path';
@@ -16,6 +15,7 @@ import { execSync } from 'child_process';
 
 const CREDENTIALS_PATH = join(homedir(), '.config', 'mcp-gateway', 'google-credentials.json');
 const TOKENS_PATH = join(homedir(), '.config', 'mcp-gateway', 'google-tokens.json');
+const LOCK_PATH = join(homedir(), '.config', 'mcp-gateway', 'google-reauth-pending');
 const REDIRECT_PORT = 3051;
 const REDIRECT_URI = `http://localhost:${REDIRECT_PORT}`;
 
@@ -35,6 +35,7 @@ try {
 } catch {
   console.error(`Cannot read credentials from ${CREDENTIALS_PATH}`);
   console.error('Run: op document get "Google OAuth Client - MCP Gateway" --vault Ray --output ~/.config/mcp-gateway/google-credentials.json');
+  rmSync(LOCK_PATH, { force: true });
   process.exit(1);
 }
 
@@ -55,41 +56,50 @@ console.log('If the browser does not open, visit:\n');
 console.log(authUrl + '\n');
 try { execSync(`open "${authUrl}"`); } catch {}
 
-const tokens = await new Promise((resolve, reject) => {
-  const server = createServer(async (req, res) => {
-    const params = new URL(req.url, REDIRECT_URI).searchParams;
-    const code = params.get('code');
-    const error = params.get('error');
+let tokens;
+try {
+  tokens = await new Promise((resolve, reject) => {
+    const server = createServer(async (req, res) => {
+      const params = new URL(req.url, REDIRECT_URI).searchParams;
+      const code = params.get('code');
+      const error = params.get('error');
 
-    if (error) {
-      res.end(`<html><body><h2>Authorization denied: ${error}</h2></body></html>`);
+      if (error) {
+        res.end(`<html><body><h2>Authorization denied: ${error}</h2></body></html>`);
+        server.close();
+        reject(new Error(`OAuth error: ${error}`));
+        return;
+      }
+      if (!code) {
+        res.end('<html><body><h2>No code received.</h2></body></html>');
+        return;
+      }
+
+      res.end('<html><body><h2>Authorization complete! You can close this tab.</h2></body></html>');
       server.close();
-      reject(new Error(`OAuth error: ${error}`));
-      return;
-    }
-    if (!code) {
-      res.end('<html><body><h2>No code received.</h2></body></html>');
-      return;
-    }
 
-    res.end('<html><body><h2>Authorization complete! You can close this tab.</h2></body></html>');
-    server.close();
+      try {
+        const { tokens } = await client.getToken({ code, redirect_uri: REDIRECT_URI });
+        resolve(tokens);
+      } catch (err) {
+        reject(err);
+      }
+    });
 
-    try {
-      const { tokens } = await client.getToken({ code, redirect_uri: REDIRECT_URI });
-      resolve(tokens);
-    } catch (err) {
-      reject(err);
-    }
+    server.listen(REDIRECT_PORT, 'localhost', () => {
+      console.log(`Waiting for callback on ${REDIRECT_URI} ...`);
+    });
+    server.on('error', reject);
   });
-
-  server.listen(REDIRECT_PORT, 'localhost', () => {
-    console.log(`Waiting for callback on ${REDIRECT_URI} ...`);
-  });
-  server.on('error', reject);
-});
+} catch (err) {
+  console.error(`Auth failed: ${err.message}`);
+  rmSync(LOCK_PATH, { force: true });
+  process.exit(1);
+}
 
 mkdirSync(join(homedir(), '.config', 'mcp-gateway'), { recursive: true });
-writeFileSync(TOKENS_PATH, JSON.stringify(tokens, null, 2), { mode: 0o600 });
+// Store issued_at so the wrapper can proactively re-auth before the 7-day expiry
+writeFileSync(TOKENS_PATH, JSON.stringify({ ...tokens, issued_at: Date.now() }, null, 2), { mode: 0o600 });
+rmSync(LOCK_PATH, { force: true });
 console.log(`\nTokens saved to ${TOKENS_PATH}`);
 console.log('Done! Restart the gateway to apply.');
