@@ -30,3 +30,25 @@ support dynamic client registration".
 `channels:history`, `channels:read`, `groups:history`, `groups:read`,
 `im:history`, `im:read`, `mpim:history`, `mpim:read`,
 `users:read`, `users:read.email`, `chat:write`, `search:read`
+
+---
+
+## Health Check Script
+Add a `./status.sh` that queries the gateway and prints each server as green/red.
+Useful after restarts or `brew upgrade` to confirm everything came back up without
+having to tail logs.
+
+---
+
+## Pin Dependency Versions
+Currently `mcp.json` uses `npx -y package` which always pulls latest. A breaking
+upstream update could silently break servers. Pin versions explicitly
+(e.g. `npx -y package@1.2.3`) for stability. Audit current versions and lock them in.
+
+---
+
+## Additional Servers
+Potential additions depending on actual usage:
+- **Figma** — design file access
+- **Raycast** — if Raycast publishes an MCP server
+- **Filesystem** — local file access outside of Obsidian vault
