@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "serverDefaults": {
     "connectionTimeout": 10000,
-    "requestTimeout": 30000,
+    "requestTimeout": 300000,
     "inheritParentEnv": true
   },
   "mcpServers": {
@@ -59,18 +59,18 @@
       "tags": ["development", "git"]
     },
     "linear": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://mcp.linear.app/mcp"],
+      "command": "node",
+      "args": ["${GATEWAY_DIR}/wrappers/oauth-mcp-wrapper.mjs", "https://mcp.linear.app/mcp"],
       "tags": ["development", "project-management"]
     },
     "notion": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://mcp.notion.com/mcp"],
+      "command": "node",
+      "args": ["${GATEWAY_DIR}/wrappers/oauth-mcp-wrapper.mjs", "https://mcp.notion.com/mcp"],
       "tags": ["knowledge", "project-management"]
     },
     "honeycomb": {
-      "command": "npx",
-      "args": ["-y", "mcp-remote", "https://mcp.honeycomb.io/mcp"],
+      "command": "node",
+      "args": ["${GATEWAY_DIR}/wrappers/oauth-mcp-wrapper.mjs", "https://mcp.honeycomb.io/mcp"],
       "tags": ["observability", "development"]
     },
     "home-assistant": {
