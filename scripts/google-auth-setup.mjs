@@ -102,4 +102,12 @@ mkdirSync(join(homedir(), '.config', 'mcp-gateway'), { recursive: true });
 writeFileSync(TOKENS_PATH, JSON.stringify({ ...tokens, issued_at: Date.now() }, null, 2), { mode: 0o600 });
 rmSync(LOCK_PATH, { force: true });
 console.log(`\nTokens saved to ${TOKENS_PATH}`);
-console.log('Done! Restart the gateway to apply.');
+
+// Restart the gateway so 1mcp picks up the fresh tokens
+try {
+  execSync('launchctl stop com.rayjohnson.mcp-gateway');
+  execSync('launchctl start com.rayjohnson.mcp-gateway');
+  console.log('Gateway restarted — Google services restored.');
+} catch {
+  console.log('Done! Restart the gateway manually to apply: launchctl stop com.rayjohnson.mcp-gateway && launchctl start com.rayjohnson.mcp-gateway');
+}
