@@ -41,6 +41,7 @@
       "tags": ["communication", "calendar", "google"]
     },
     "google-drive": {
+      "disabled": true,
       "command": "node",
       "args": ["${GATEWAY_DIR}/wrappers/google-mcp-wrapper.mjs", "https://drivemcp.googleapis.com/mcp/v1"],
       "tags": ["storage", "files", "google"]

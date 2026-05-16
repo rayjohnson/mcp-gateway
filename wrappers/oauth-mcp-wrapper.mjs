@@ -63,6 +63,11 @@ parentRl.on('line', (line) => {
     // Queue it; send when the current in-flight request completes.
     queue.push({ line, id: msg.id });
     drainQueue();
+  } else if (msg.method === 'notifications/cancelled' && pendingId !== null) {
+    // Suppress cancellations while a request is in flight. mcp-remote may be
+    // waiting for the user to complete a browser-based OAuth flow; forwarding
+    // the cancellation could abort that wait. The pending request will resolve
+    // on its own once auth completes or fails.
   } else {
     // Notification (no id) or response to a server-initiated request: pass through immediately.
     child.stdin.write(line + '\n');
