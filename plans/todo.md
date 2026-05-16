@@ -47,6 +47,34 @@ upstream update could silently break servers. Pin versions explicitly
 
 ---
 
+## Multiple Google Accounts
+Support authenticating as more than one Google account simultaneously (e.g., Moov work
+account and personal account). Currently a single token file is shared across all three
+Google servers, so only one account can be active.
+
+**Approach:**
+1. Store separate token files — e.g., `google-tokens-moov.json`, `google-tokens-personal.json`
+2. Update `google-mcp-wrapper.mjs` to accept a token-file path as a second argument
+3. Update `google-auth-setup.mjs` to accept a `--token-file` flag
+4. Add duplicate server entries in `mcp.json` (e.g., `gmail-moov`, `gmail-personal`)
+
+---
+
+## Config Web Dashboard
+A local web UI for managing the gateway without touching config files or the CLI.
+
+**Features:**
+- List all configured MCP servers with their status (running/stopped/error)
+- Show active OAuth tokens and their expiry (Google, Slack, etc.)
+- Trigger OAuth re-auth flows (e.g., renew Google tokens) from the browser
+- View/edit environment variables and server config
+- Tail gateway logs
+
+**Approach:** Small Express/Fastify server bundled with the gateway, served on localhost
+(e.g., `http://localhost:3050`). Could be started as a separate launchd service or on-demand.
+
+---
+
 ## Additional Servers
 Potential additions depending on actual usage:
 - **Figma** — design file access
